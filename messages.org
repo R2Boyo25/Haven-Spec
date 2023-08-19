@@ -1,0 +1,50 @@
+#+TITLE: Haven Messages
+
+The message table should be something like
+#+BEGIN_SRC sql
+  CREATE TABLE messages(
+		 message_id BINARY(8),
+		 thread_id BINARY(8),
+		 author_id BINARY(8),
+		 content VARBINARY(512000000)
+  );
+#+END_SRC
+
+~content~ is GPG encrypted
+
+To see the recipients of a message, check the recipients for the ~thread_id~
+
+* Format
+
+Markdown w/ custom extensions
+
+** Replies
+
+#+BEGIN_EXAMPLE
+Replying to <message id>:
+
+#+END_EXAMPLE
+
+they can be chained to reply to multiple messages at once:
+
+#+BEGIN_EXAMPLE
+Replying to <message id>:
+Replying to <another message id>:
+
+#+END_EXAMPLE
+
+** Reactions
+
+Reactions are done as a message containing just
+
+#+BEGIN_EXAMPLE
+React :emoji: to <message id>
+#+END_EXAMPLE
+
+** Where Are Attachments?
+
+Attachments are done as embeds in the following syntax:
+#+BEGIN_EXAMPLE
+[[https://example.com/attachment.png]]
+[[https://cdn.google.com/something/another_attachment.webp]]
+#+END_EXAMPLE

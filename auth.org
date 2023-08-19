@@ -1,0 +1,66 @@
+#+TITLE: Haven Authentication
+
+* GPG Challenges
+1. Generate a random 4096-byte challenge
+2. Encrypt and sign the challenge with the user's public key.
+3. Send it to the client
+4. Client decrypts it, re-encrypts the decrypted challenge with the [[server-pubkey][server's pubkey]]
+Pseudocode:
+#+BEGIN_SRC python
+  original_challenge = os.urandom(4096)
+  encrypted_challenge = encrypt_and_sign(original_challenge, user_pubkey=user_pubkey)
+
+  send_bytes(encrypted_challenge)
+
+  client_response = receive_bytes()
+
+  if not verify_signed(client_response, user_pubkey=user_pubkey):
+	  close_connection()
+
+  if decrypt(client_response) == original_challenge:
+	  # challenge accepted
+#+END_SRC
+
+* "Commands"
+
+<<server-pubkey>> IMPORTANT: upon opening a websocket the server sends its pubkey in a binary packet.
+
+
+* IMPORTANT: [[file:users.org::*Usernames][Username Restrictions]]
+
+** ~REGISTER~ - Registration
+~REGISTER <username>~
+1. Client sends the user's pubkey in a binary packet.
+2. Check if the user exists and error if they do.
+3. Have the client complete a [[*GPG Challenges][challenge]].
+4. Register the user in the database.
+5. Have the client complete [[~AUTH~]]. (without sending the ~AUTH~ message)
+
+** ~AUTH~ - Logins
+~AUTH <username>~
+1. Client sends the user's pubkey in a binary packet.
+2. Have the client complete a [[*GPG Challenges][challenge]].
+3. User is authenticated.
+4. [[*Sessions][Create a session]]
+
+* Sessions
+
+For security, sessions are used as tokens for the HTTPS API.
+
+In the database, the sessions table should be similar to
+#+BEGIN_SRC sql
+  CREATE TABLE sessions (
+		 user_snowflake BINARY(8),
+		 session_token BINARY(1024), -- May be upped to 2048 bytes? undecided
+		 ip_address VARCHAR(40), -- used to restrict sessions to a specific ip address
+		 time_created TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  );
+#+END_SRC
+
+Sessions MUST be restricted to a specific IP address. Why? YouTube has recently (2023) had account breaches due to cookie theft.
+
+* TODO Decide on a session token size
+
+** Expired session cleanup
+
+Sessions should be cleaned up every 15-30 minutes if they are expired.

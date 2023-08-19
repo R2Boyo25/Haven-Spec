@@ -1,0 +1,7 @@
+#+TITLE: Haven Specification
+
+* [[file:auth.org][Authentication]]
+* [[file:threads.org][Threads]]
+* [[file:users.org][Users]]
+* [[file:messages.org][Messages]]
+* [[file:federation.org][Federation]]

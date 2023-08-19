@@ -1,0 +1,29 @@
+#+TITLE: Haven Users
+
+A user table should look like:
+#+BEGIN_SRC sql
+  CREATE TABLE users (
+		 gpg_pubkey VARBINARY(512000000),
+		 profile_picture VARCHAR(2000), -- A URL
+		 username VARCHAR(35),
+		 bio VARCHAR(1000),
+		 user_snowflake BINARY(8)
+  );
+#+END_SRC
+
+
+* Bio
+
+An about me section.
+IMPORTANT: This will not be encrypted - make sure to warn users of this.
+
+* Usernames
+
+Usernames are subject to these restrictions:
+- Must be 1-35 chars in length
+- can only contain ~0-9~, ~a-z~, ~A-Z~, ~_~, or ~.~
+- (regex is ~[0-9a-zA-Z_.]{1,35}~)
+
+** Remote Usernames
+
+When referring to a remote user, they should be displayed as ~username@instance.tld~.

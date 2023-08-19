@@ -1,0 +1,15 @@
+#+TITLE: Haven Federation
+
+Instances are federated using a federation API.
+
+* TODO Resource mapping tables
+
+Each server should store a mapping table for each thing they need to look up.
+
+
+
+* TODO Users
+
+* TODO Messages
+
+* TODO Threads

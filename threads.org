@@ -1,0 +1,63 @@
+#+TITLE: Haven Threads
+
+* Threads, Not Channels
+
+Haven uses a system of threads (where threads are a generic structure for organizing messages and sub-threads)
+
+A thread are essentially just:
+#+BEGIN_SRC sql
+  CREATE TABLE threads(
+		 thread_snowflake BINARY(8),
+		 parent_snowflake BINARY(8)
+		 thread_name VARCHAR(32),
+		 creation_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		 creator_snowflake BINARY(8),
+		 recipients VARBINARY(8000000) -- List of user_snowflakes or empty for public
+  );
+#+END_SRC
+
+* Public vs Private
+
+** Public Threads
+
+Visible to everyone, not encrypted.
+(Should be indexable by search engines but there should be a toggle in the server config that requires an account to view messages.)
+
+** Private Threads
+
+Visible only to ~recipients~, encrypted.
+Groups/DMs.
+
+* Nestable
+
+A core feature of threads is that they're nestable. (you can make threads in threads)
+
+* Thread "containers"
+Note: These are just kind of a use of threads, they are no different
+than normal threads.
+
+You can use a thread as a group to hold other threads, for example: If
+you use the protocol for a comments section on a website, you can have
+a thread called "Posts" which contains threads for each post on the
+website, and then inside each post, you can create a thread for each
+top-level comment.
+
+#+BEGIN_EXAMPLE
+/Posts/Post Title
+/Posts/Post Title/#001 - Username
+/Posts/Post Title/#002 - Another User
+...
+/Posts/Post Title/#1023 - Also Another User
+Wow, your post is quite engaging :3
+#+END_EXAMPLE
+
+* Creation time - used to order threads
+
+* TODO Two options:
+
+** Allow threads to share the same name in the same parent thread
+- Breaks ~/parent/thread name~ lookups
+  
+** Disallow duplicate names
+- Allows ~/parent/thread name~ lookups
+- Requires everything to have different names
